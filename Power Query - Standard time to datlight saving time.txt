@@ -1,0 +1,16 @@
+/*Power Query Script for Last Refreshed Data NZDT/NZST switch. Have since found another method to switch between NZDT/NZST*/
+
+let
+//NZ daylight saving starts last Sunday in September and ends on the first Sunday in April
+SummerTime = Date.StartOfWeek(#date(Date.Year(DateTime.LocalNow()),9,30),Day.Sunday),
+WinterTime = Date.StartOfWeek(#date(Date.Year(DateTime.LocalNow()),4,7),Day.Sunday),
+    CurrentDateTime = DateTimeZone.RemoveZone(DateTimeZone.UtcNow())
+,
+TimeShiftFromUTC = if CurrentDateTime < WinterTime & #time(2,0,0) or CurrentDateTime > SummerTime & #time(3,0,0) then 13 else 12,
+//Have to do it by winter time as the summer time spans over two different years
+TimeStamp = DateTimeZone.SwitchZone(DateTimeZone.UtcNow(),TimeShiftFromUTC,0),
+    #"Converted to Table" = #table(1, {{TimeStamp}}),
+    #"Renamed Columns" = Table.RenameColumns(#"Converted to Table",{{"Column1", "Last Refreshed Date"}}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Renamed Columns",{{"Last Refreshed Date", type datetimezone}})
+in
+#"Changed Type"
