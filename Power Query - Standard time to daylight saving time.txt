@@ -1,4 +1,4 @@
-/*Power Query Script for Last Refreshed Data NZDT/NZST switch. Have since found another method to switch between NZDT/NZST*/
+//Power Query Script for Last Refreshed Data NZDT/NZST switch. Have since found another method to switch between NZDT/NZST
 
 let
 //NZ daylight saving starts last Sunday in September and ends on the first Sunday in April
